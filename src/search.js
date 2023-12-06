@@ -19,7 +19,7 @@ window.electronAPI.receiveSearchResults((videos) => {
     videoElement.setAttribute('src', video.video_files[0].link); // Use the first video file link
 
     const downloadLink = document.createElement('a');
-    downloadLink.setAttribute('target', '_blank');
+    downloadLink.classList.add('download-link'); // Add a class for styling if needed
     downloadLink.setAttribute('href', video.video_files[0].link); // Use the first video file link
     downloadLink.setAttribute('download', '');
     downloadLink.textContent = 'Download';
