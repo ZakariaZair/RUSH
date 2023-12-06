@@ -7,20 +7,19 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     webPreferences: {
+      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
     },
   });
-
-  // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
 };
 
 // This method will be called when Electron has finished
@@ -45,5 +44,24 @@ app.on('activate', () => {
   }
 });
 
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+const { ipcMain } = require('electron');
+const axios = require('axios');
+
+ipcMain.on('perform-search', async (event, query) => {
+  try {
+    const response = await axios.get(`https://api.pexels.com/videos/search`, {
+      headers: {
+        Authorization: 'XUhiKU1hyYJlVG540JuA5iKZ7IIhvbThi55PsxtZDbKrSa9LdG7Um6Ox'
+      },
+      params: { query: query }
+    });
+    event.sender.send('search-results', response.data.videos);
+  } catch (error) {
+    console.error('Search API error:', error);
+    event.sender.send('search-results', []);
+  }
+});
