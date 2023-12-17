@@ -65,3 +65,31 @@ ipcMain.on('perform-search', async (event, query) => {
     event.sender.send('search-results', []);
   }
 });
+
+ipcMain.on('convert-text-to-speech', async (event, text) => {
+  const options = {
+    method: 'POST',
+    url: 'https://voicerss-text-to-speech.p.rapidapi.com/',
+    params: {
+      key: 'aa6a5e93f5874dae81e7e4b350a8f194', // Replace with your API key
+      src: text,
+      hl: 'en-us',
+      v: 'Linda',
+      c: 'mp3',
+      f: '8khz_8bit_mono'
+    },
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      'X-RapidAPI-Key': 'f50cd19a15mshba7964e64c809dbp1c895cjsn24f9d7399b75', // Replace with your RapidAPI key
+      'X-RapidAPI-Host': 'voicerss-text-to-speech.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    event.reply('tts-response', response.data); // Sends the audio file back to the renderer
+  } catch (error) {
+    console.error('API request failed:', error);
+    event.reply('tts-response', null); // Sends an error response back
+  }
+});
